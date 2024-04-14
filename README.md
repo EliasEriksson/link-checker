@@ -13,6 +13,8 @@ python -m pip install -r requirements.txt
 ```bash
 python main.py my_input_data_file.csv my_output_data_file.csv
 ```
+Failed connections are marked with status `502`
+
 ### Input file format
 The input data file should be a CSV file with no headers and all links in the first column.
 ```csv
