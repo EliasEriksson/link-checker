@@ -14,10 +14,10 @@ async def request(link: str, pause: float | None = None) -> tuple[str, int]:
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(connect=10)) as client:
             async with client.get(link) as response:
                 print(f"Response status {response.status} from link {link}")
-                return link, 200 <= response.status < 300
+                return link, response.status
     except aiohttp.ServerTimeoutError:
         print(f"Failed to request: {link}")
-        return link, 502
+        return link, 600
 
 
 async def main(input: Path, output: Path, pause: float | None = None) -> None:
