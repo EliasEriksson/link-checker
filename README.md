@@ -10,9 +10,22 @@ python -m pip install -r requirements.txt
 ```
 
 ## Usage
+### In parallel
+This is useful if the link are from different domains. It is many times faster than sequential but can put a load on
+the receivers server if it's the same domain.
 ```bash
 python main.py my_input_data_file.csv my_output_data_file.csv
 ```
+
+### In sequence
+This is useful if all the links are from the same domain. Be nice to the server owner!
+0 Can be specified to send sequential but with 0 extra downtime.
+```bash
+python main.py my_input_data_file.csv my_output_data_file.csv 3.1
+```
+
+
+
 Failed connections are marked with status `502`
 
 ### Input file format

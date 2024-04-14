@@ -5,7 +5,10 @@ import sys
 import aiohttp
 
 
-async def request(link: str) -> tuple[str, int]:
+async def request(link: str, pause: float | None = None) -> tuple[str, int]:
+    if pause is not None:
+        print(f"Pausing for {pause} seconds.")
+        await asyncio.sleep(pause)
     print(f"Requesting: {link}")
     try:
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(connect=10)) as client:
@@ -17,12 +20,15 @@ async def request(link: str) -> tuple[str, int]:
         return link, 502
 
 
-async def main(input: Path, output: Path) -> None:
+async def main(input: Path, output: Path, pause: float | None = None) -> None:
     with open(input) as input:
         reader = csv.reader(input)
         links = [row[0] for row in reader]
-    requests = [asyncio.create_task(request(link)) for link in links]
-    result = await asyncio.gather(*requests)
+    result = (
+        [await request(link, pause) for link in links]
+        if pause is not None else
+        (await asyncio.gather(*[asyncio.create_task(request(link)) for link in links]))
+    )
     with open(output, "w") as file:
         writer = csv.writer(file)
         writer.writerow(["Link", "Status"])
@@ -40,4 +46,8 @@ if __name__ == '__main__':
     except IndexError:
         print("Output file required as second sysarg.")
         sys.exit(1)
-    asyncio.run(main(input, output))
+    try:
+        pause = float(sys.argv[3])
+    except (IndexError, ValueError):
+        pause = None
+    asyncio.run(main(input, output, pause))
